@@ -75,18 +75,25 @@ def convert(input_pdf, output_pdf, margin_mm=40, horizontal=False, lines=True):
         page_w, page_h = A4
         margin = mm_to_pt(margin_mm)
         target_w = page_w - 2 * margin
-        target_h = page_h - 2 * margin
+        target_h = page_h
         for page in reader.pages:
-            w, h = float(page.mediabox.width), float(page.mediabox.height)
-            scale = min(target_w / w, target_h / h)
-            tx = (page_w - w * scale) / 2
-            ty = (page_h - h * scale) / 2
-            new_page = writer.add_blank_page(page_w, page_h)
+            # get the page width and height
+            c = 500
+            w, h = float(page.mediabox.width) + c, float(page.mediabox.height)
+            # determine the amount that we need to scale content by
+            # scale = min(target_w / w, target_h / h)
+            # manually calculate how much we need to transform the page
+            tx = c / 2
+            ty = 0
+            # create a new page and merge all changes into it
+            new_page = writer.add_blank_page(w, h)
             new_page.merge_transformed_page(
-                page, Transformation().scale(scale).translate(tx, ty)
+                # page, Transformation().scale(scale).translate(tx, ty)
+                page, Transformation().translate(tx, ty)
             )
 
     if reader.outline:
+        # add metadatga
         copy_outline(reader, writer, reader.outline)
 
     with open(output_pdf, "wb") as f:
