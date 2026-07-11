@@ -5,40 +5,8 @@
 import sys
 from pathlib import Path
 from pypdf import PdfReader, PdfWriter, Transformation
-from pypdf.generic import DecodedStreamObject, ArrayObject, NameObject
 
-A4 = (595, 842)
-A3_LANDSCAPE = (1190, 842)
-
-LINE_SPACING_MM = 8
-LINE_COLOR = (0.7, 0.8, 1.0)
-LINE_WIDTH = 0.5
-MARGIN_TOP_MM = 0
-MARGIN_BOTTOM_MM = 0
-MARGIN_SIDE_MM = 10
-
-
-def mm_to_pt(mm):
-    return mm * 72 / 25.4
-
-
-def build_line_bytes(x_start, x_end, page_h):
-    spacing = mm_to_pt(LINE_SPACING_MM)
-    margin_top = mm_to_pt(MARGIN_TOP_MM)
-    margin_bottom = mm_to_pt(MARGIN_BOTTOM_MM)
-    r, g, b = LINE_COLOR
-
-    lines = [
-        f"{r:.3f} {g:.3f} {b:.3f} RG",
-        f"{LINE_WIDTH} w",
-    ]
-    y = page_h - margin_top
-    while y >= margin_bottom:
-        lines.append(f"{x_start:.2f} {y:.2f} m {x_end:.2f} {y:.2f} l S")
-        y -= spacing
-
-    return "\n".join(lines).encode()
-
+MARGIN_SIDE_PT = 500
 
 def copy_outline(reader, writer, outline, parent=None):
     last = None
@@ -51,46 +19,21 @@ def copy_outline(reader, writer, outline, parent=None):
             last = writer.add_outline_item(item.title, page_num, parent=parent)
 
 
-def convert(input_pdf, output_pdf, margin_mm=40, horizontal=False, lines=True):
+def convert(input_pdf, output_pdf):
     reader = PdfReader(input_pdf)
     writer = PdfWriter()
 
-    if horizontal:
-        page_w, page_h = A3_LANDSCAPE
-        x_start = mm_to_pt(MARGIN_SIDE_MM) + A4[0]
-        x_end = page_w - mm_to_pt(MARGIN_SIDE_MM)
-
-        for page in reader.pages:
-            new_page = writer.add_blank_page(page_w, page_h)
-
-            if lines:
-                stream = DecodedStreamObject()
-                stream.set_data(build_line_bytes(x_start, x_end, page_h))
-                stream_ref = writer._add_object(stream)
-                new_page[NameObject("/Contents")] = ArrayObject([stream_ref])
-
-            new_page.merge_transformed_page(page, Transformation())
-
-    else:
-        page_w, page_h = A4
-        margin = mm_to_pt(margin_mm)
-        target_w = page_w - 2 * margin
-        target_h = page_h
-        for page in reader.pages:
-            # get the page width and height
-            c = 500
-            w, h = float(page.mediabox.width) + c, float(page.mediabox.height)
-            # determine the amount that we need to scale content by
-            # scale = min(target_w / w, target_h / h)
-            # manually calculate how much we need to transform the page
-            tx = c / 2
-            ty = 0
-            # create a new page and merge all changes into it
-            new_page = writer.add_blank_page(w, h)
-            new_page.merge_transformed_page(
-                # page, Transformation().scale(scale).translate(tx, ty)
-                page, Transformation().translate(tx, ty)
-            )
+    for page in reader.pages:
+        # get the page width and height
+        w, h = float(page.mediabox.width) + MARGIN_SIDE_PT, float(page.mediabox.height)
+        # calculate how much we need to transform the page
+        tx = MARGIN_SIDE_PT / 2
+        ty = 0
+        # create a new page and merge all changes into it
+        new_page = writer.add_blank_page(w, h)
+        new_page.merge_transformed_page(
+            page, Transformation().translate(tx, ty)
+        )
 
     if reader.outline:
         # add metadatga
@@ -101,13 +44,11 @@ def convert(input_pdf, output_pdf, margin_mm=40, horizontal=False, lines=True):
 
 
 def main():
-    args = [a for a in sys.argv[1:] if a not in ("--horizontal", "--no-lines")]
-    horizontal = "--horizontal" in sys.argv
-    no_lines = "--no-lines" in sys.argv
+    args = [a for a in sys.argv[1:]]
 
     if not args:
         print(
-            "Usage: script.py input.pdf [output.pdf] [margin_mm] [--horizontal] [--no-lines]"
+            "Usage: script.py input.pdf [output.pdf]"
         )
         sys.exit(1)
 
@@ -116,15 +57,10 @@ def main():
     output_pdf = (
         args[1]
         if has_output
-        else f"{'horizon' if horizontal else 'scaled'}_{Path(input_pdf).name}"
-    )
-    margin = (
-        float(args[2 if has_output else 1])
-        if len(args) > (2 if has_output else 1)
-        else 40
+        else f"{'scaled'}_{Path(input_pdf).name}"
     )
 
-    convert(input_pdf, output_pdf, margin, horizontal, lines=not no_lines)
+    convert(input_pdf, output_pdf)
 
 
 if __name__ == "__main__":
