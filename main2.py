@@ -41,29 +41,28 @@ def convert(input_pdf, output_pdf):
                 annot = annot_ref.get_object()
                 
                 # Shift /Rect using NameObject and ArrayObject
-                if "/Rect" in annot:
-                    rect = annot["/Rect"]
-                    rect_key = NameObject("/Rect")
-                    rect_values = ArrayObject([
-                        FloatObject(float(rect[0]) + tx),
-                        FloatObject(float(rect[1]) + ty),
-                        FloatObject(float(rect[2]) + tx),
-                        FloatObject(float(rect[3]) + ty)
-                    ])
-                    annot[rect_key] = rect_values
+                # if "/Rect" in annot:
+                #     rect = annot["/Rect"]
+                #     rect_key = NameObject("/Rect")
+                #     rect_values = ArrayObject([
+                #         FloatObject(float(rect[0]) + tx),
+                #         FloatObject(float(rect[1]) + ty),
+                #         FloatObject(float(rect[2]) + tx),
+                #         FloatObject(float(rect[3]) + ty)
+                #     ])
+                #     annot[rect_key] = rect_values
 
                 # Shift /QuadPoints using NameObject and ArrayObject
-                # if "/QuadPoints" in annot:
-                #     qp = annot["/QuadPoints"]
-                #     qp_key = NameObject("/QuadPoints")
-                #     new_qp = []
-                #     for i, coord in enumerate(qp):
-                #         if i % 2 == 0:
-                #             new_qp.append(FloatObject(float(coord) + tx))
-                #         else:
-                #             new_qp.append(FloatObject(float(coord) + ty))
-                    
-                #     annot[qp_key] = ArrayObject(new_qp)
+                if "/QuadPoints" in annot:
+                    qp = annot["/QuadPoints"]
+                    qp_key = NameObject("/QuadPoints")
+                    new_qp = []
+                    for i, coord in enumerate(qp):
+                        if i % 2 == 0:
+                            new_qp.append(FloatObject(float(coord) + tx))
+                        else:
+                            new_qp.append(FloatObject(float(coord) + ty))
+                    annot[qp_key] = ArrayObject(new_qp)
         # -----------------------------------------------------------
     if reader.outline:
         # add metadatga
