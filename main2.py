@@ -19,6 +19,7 @@ def copy_outline(reader, writer, outline, parent=None):
             page_num = reader.get_destination_page_number(item)
             last = writer.add_outline_item(item.title, page_num, parent=parent)
 
+test = set()
 
 def convert(input_pdf, output_pdf):
     reader = PdfReader(input_pdf)
@@ -53,6 +54,9 @@ def convert(input_pdf, output_pdf):
                 #     annot[rect_key] = rect_values
 
                 # Shift /QuadPoints using NameObject and ArrayObject
+                global test
+                for k in dict.keys(annot):
+                    test.add(k)
                 if "/QuadPoints" in annot:
                     qp = annot["/QuadPoints"]
                     qp_key = NameObject("/QuadPoints")
@@ -63,6 +67,8 @@ def convert(input_pdf, output_pdf):
                         else:
                             new_qp.append(FloatObject(float(coord) + ty))
                     annot[qp_key] = ArrayObject(new_qp)
+    print(test)
+    exit()
         # -----------------------------------------------------------
     if reader.outline:
         # add metadatga
