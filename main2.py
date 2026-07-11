@@ -73,16 +73,16 @@ def convert(input_pdf, output_pdf):
                 annot = annot_ref.get_object()
                 
                 # Shift /Rect using NameObject and ArrayObject
-                # if "/Rect" in annot:
-                #     rect = annot["/Rect"]
-                #     rect_key = NameObject("/Rect")
-                #     rect_values = ArrayObject([
-                #         FloatObject(float(rect[0]) + tx),
-                #         FloatObject(float(rect[1]) + ty),
-                #         FloatObject(float(rect[2]) + tx),
-                #         FloatObject(float(rect[3]) + ty)
-                #     ])
-                #     annot[rect_key] = rect_values
+                if "/Rect" in annot:
+                    rect = annot["/Rect"]
+                    rect_key = NameObject("/Rect")
+                    rect_values = ArrayObject([
+                        FloatObject(float(rect[0]) + tx),
+                        FloatObject(float(rect[1]) + ty),
+                        FloatObject(float(rect[2]) + tx),
+                        FloatObject(float(rect[3]) + ty)
+                    ])
+                    annot[rect_key] = rect_values
 
                 if "/InkList" in annot:
                     # global inklists
