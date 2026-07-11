@@ -54,21 +54,23 @@ def convert(input_pdf, output_pdf):
                 #     annot[rect_key] = rect_values
 
                 # Shift /QuadPoints using NameObject and ArrayObject
-                global test
-                for k in dict.keys(annot):
-                    test.add(k)
-                if "/QuadPoints" in annot:
-                    qp = annot["/QuadPoints"]
-                    qp_key = NameObject("/QuadPoints")
-                    new_qp = []
-                    for i, coord in enumerate(qp):
-                        if i % 2 == 0:
-                            new_qp.append(FloatObject(float(coord) + tx))
-                        else:
-                            new_qp.append(FloatObject(float(coord) + ty))
-                    annot[qp_key] = ArrayObject(new_qp)
-    print(test)
-    exit()
+                # global test
+                # for k in dict.keys(annot):
+                #     test.add(k)
+                # if "/QuadPoints" in annot:
+                #     qp = annot["/QuadPoints"]
+                #     qp_key = NameObject("/QuadPoints")
+                #     new_qp = []
+                #     for i, coord in enumerate(qp):
+                #         if i % 2 == 0:
+                #             new_qp.append(FloatObject(float(coord) + tx))
+                #         else:
+                #             new_qp.append(FloatObject(float(coord) + ty))
+                #     annot[qp_key] = ArrayObject(new_qp)
+                if "/AP" in annot:
+                    del annot["/AP"]
+    # print(test)
+    # exit()
         # -----------------------------------------------------------
     if reader.outline:
         # add metadatga
