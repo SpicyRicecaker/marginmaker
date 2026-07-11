@@ -8,6 +8,7 @@ from pypdf import PdfReader, PdfWriter, Transformation
 from pypdf.generic import FloatObject, NameObject, ArrayObject
 
 MARGIN_SIDE_PT = 500
+MARGIN_TOP_AND_BOT_PT = 0
 
 def copy_outline(reader, writer, outline, parent=None):
     last = None
@@ -46,10 +47,10 @@ def convert(input_pdf, output_pdf):
 
     for page in reader.pages:
         # get the page width and height
-        w, h = float(page.mediabox.width) + MARGIN_SIDE_PT, float(page.mediabox.height)
+        w, h = float(page.mediabox.width) + MARGIN_SIDE_PT, float(page.mediabox.height) + MARGIN_TOP_AND_BOT_PT
         # calculate how much we need to transform the page
         tx = MARGIN_SIDE_PT / 2
-        ty = 0
+        ty = MARGIN_TOP_AND_BOT_PT / 2
         # create a new page and merge all changes into it
         new_page = writer.add_blank_page(w, h)
         new_page.merge_transformed_page(
