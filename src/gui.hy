@@ -1,72 +1,50 @@
-# coding: magic.braces
-# from tkinter import *
-from tkinter import ttk
-# root = Tk()
-# frm = ttk.Frame(root, padding=10)
-# frm.grid()
-# ttk.Label(frm, text="Hello World!").grid(column=0, row=0)
-# ttk.Button(frm, text="Quit", command=root.destroy).grid(column=1, row=0)
-# root.mainloop()
-# 
-import tkinter as tk
-from tkinterdnd2 import DND_FILES, TkinterDnD
+(import tkinter :as tk)
+(import tkinter.ttk [Frame Label Button]) ; Optional based on commented imports
+(import tkinter.ttk :as ttk)
+(import tkinterdnd2 [DND_FILES TkinterDnD])
 
-def instafocus(window) {
-    # 1. Force the window to the very top layer
-    window.attributes('-topmost', True)
-    
-    # 2. Lift it above everything else
-    window.lift()
-    
-    # 3. Forcefully grab system focus 
-    # window.focus_force()
-    
-    # 4. Release the "always on top" behavior after an idle cycle, 
-    # so the user can still put other windows over it if they want.
-    window.after_idle(window.attributes, '-topmost', False)
-}
-    
+(defn instafocus [window]
+  ;; 1. Force the window to the very top layer
+  (.attributes window "-topmost" True)
+  
+  ;; 2. Lift it above everything else
+  (.lift window)
+  
+  ;; 3. Forcefully grab system focus 
+  ;; (.focus-force window)
+  
+  ;; 4. Release the "always on top" behavior after an idle cycle, 
+  ;; so the user can still put other windows over it if they want.
+  (.after_idle window window.attributes "-topmost" False))
 
-def init_gui() {
-    root = TkinterDnD.Tk()  # notice - use this instead of tk.Tk()
-    root.geometry("400x300")
+(defn init_gui []
+  (setv root (TkinterDnD.Tk)) ; notice - use this instead of tk.Tk()
+  (.geometry root "400x300")
 
-    {
-     frm0 = ttk.Frame(root, padding=10)
-    #     frm0.pack()
+  (setv frm0 (ttk.Frame root :padding 10))
+  (.pack frm0)
 
-    #     # {
-    #     #     frm = ttk.Frame(frm0, padding=10)
-    #     #     frm.grid()
+  (setv frm (ttk.Frame frm0 :padding 10))
+  (.grid frm)
 
-    #     #     {
-    #     #         ttk.Label(frm, text="Drop file here!").grid(column=0, row=0)
-    #     #     }
+  (.grid (ttk.Label frm :text "Drop file here!") :column 0 :row 0)
 
-    #     #     {
-    #     #         lb = tk.Listbox(frm, width=30, height=20)
-    #     #         lb.grid(column=0, row=1)
-    #     #         def on_drop(event) {
-    #     #             # event.data is a raw Tcl list string, not a Python list - see note below
-    #     #             for path in root.tk.splitlist(event.data) {
-    #     #                 lb.insert(tk.END, path)
-    #     #             }
-    #     #         }
-    #     #         lb.drop_target_register(DND_FILES)
-    #     #         lb.dnd_bind('<<Drop>>', on_drop)
-    #     #     }
-    #     # }
-    }
-    
-    instafocus(root)
-    return root
-}
+  (setv lb (tk.Listbox frm :width 30 :height 20))
+  (.grid lb :column 0 :row 1)
 
-def main() {
-    root = init_gui()
-    root.mainloop()
-}
+  (defn on-drop [event]
+    ;; event.data is a raw Tcl list string, not a Python list
+    (for [path (.splitlist root.tk event.data)]
+       (.insert lb tk.END path)))
 
-if __name__ == "__main__" {
-    main()
-}
+  (.drop-target-register lb DND_FILES)
+  (.dnd-bind lb "<<Drop>>" on-drop)
+
+  (instafocus root)
+  root)
+
+(defn main []
+  (setv root (init_gui))
+  (.mainloop root))
+
+(when (= __name__ "__main__") (main))
