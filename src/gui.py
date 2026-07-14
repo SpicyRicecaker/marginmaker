@@ -60,6 +60,7 @@ class App():
           # event.data is a raw Tcl list string, not a Python list
           for path in self.root.tk.splitlist(event.data):
               self.dropbox.insert(tk.END, path)
+          self.dropbox.selection_set(tk.END)
 
       self.dropbox.drop_target_register(DND_FILES)
       self.dropbox.dnd_bind("<<Drop>>", on_drop)
