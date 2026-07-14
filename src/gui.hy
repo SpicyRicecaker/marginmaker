@@ -21,27 +21,28 @@
   (setv root (TkinterDnD.Tk)) ; notice - use this instead of tk.Tk()
   (.geometry root "400x300")
 
-  (setv frm0 (ttk.Frame root :padding 10))
-  (.pack frm0)
+  (let [frm0 (ttk.Frame root :padding 10)]
+    (.pack frm0)
 
-  (setv frm (ttk.Frame frm0 :padding 10))
-  (.grid frm)
+    (let [frm (ttk.Frame frm0 :padding 10)]
+      (.grid frm)
 
-  (.grid (ttk.Label frm :text "Drop file here!") :column 0 :row 0)
+      (.grid (ttk.Label frm :text "Drop file here!") :column 0 :row 0)
 
-  (setv lb (tk.Listbox frm :width 30 :height 20))
-  (.grid lb :column 0 :row 1)
+      (let [lb (tk.Listbox frm :width 30 :height 20)]
+        (.grid lb :column 0 :row 1)
+        (defn on-drop [event]
+          ;; event.data is a raw Tcl list string, not a Python list
+          (for [path (.splitlist root.tk event.data)]
+            (.insert lb tk.END path)))
+        (.drop-target-register lb DND_FILES)
+        (.dnd-bind lb "<<Drop>>" on-drop)
 
-  (defn on-drop [event]
-    ;; event.data is a raw Tcl list string, not a Python list
-    (for [path (.splitlist root.tk event.data)]
-       (.insert lb tk.END path)))
-
-  (.drop-target-register lb DND_FILES)
-  (.dnd-bind lb "<<Drop>>" on-drop)
-
-  (instafocus root)
-  root)
+        (instafocus root)
+        
+        root)
+      ))
+  )
 
 (defn main []
   (setv root (init_gui))
