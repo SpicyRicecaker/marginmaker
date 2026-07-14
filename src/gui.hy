@@ -1,4 +1,5 @@
 (import tkinter :as tk)
+(import tkinter [Entry StringVar])
 (import tkinter.ttk [Frame Label Button]) ; Optional based on commented imports
 (import tkinter.ttk :as ttk)
 (import tkinterdnd2 [DND_FILES TkinterDnD])
@@ -18,8 +19,10 @@
   (.after_idle window window.attributes "-topmost" False))
 
 (defn init_gui []
+  (setv margin-str StringVar)
+
   (setv root (TkinterDnD.Tk)) ; notice - use this instead of tk.Tk()
-  (.geometry root "400x300")
+  (.geometry root "500x400")
 
   (let [frm0 (ttk.Frame root :padding 10)]
     (.pack frm0)
@@ -38,9 +41,32 @@
         (.drop-target-register lb DND_FILES)
         (.dnd-bind lb "<<Drop>>" on-drop)
 
-        (instafocus root)
-        
-        root)
+        (instafocus root))
+      
+      (let [cv (ttk.Button frm :text "Convert selected pdf")]
+        (.grid cv :column 1 :row 0))
+
+      ; (let [mg (ttk.Label frm :text "Margin sides")]
+      ;   (.grid mg :column 1 :row 1)
+      ;   )
+      (let [frm2 (ttk.Frame frm :padding 0)]
+        (.grid frm2 :column 1 :row 1)
+
+        (let [mg (ttk.Label frm2 :text "Margin sides")]
+          (.grid mg :column 0 :row 0)
+          )
+
+        (let [mg-txt (ttk.Entry frm2 :textvariable margin-str)]
+           (.grid mg-txt :column 0 :row 1)
+           (.insert mg-txt 0 "500")
+
+           (defn on-change [e]
+             (print margin-str))
+
+           (.trace-add margin-str margin-str on-change "write")
+          )
+          )
+      root
       ))
   )
 

@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 from pypdf import PdfReader, PdfWriter, Transformation
 from pypdf.generic import FloatObject, NameObject, ArrayObject
+from tkinter import Entry
 
 MARGIN_SIDE_PT = 500
 MARGIN_TOP_AND_BOT_PT = 0
@@ -101,3 +102,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    Entry()
