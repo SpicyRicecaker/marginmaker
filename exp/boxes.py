@@ -11,6 +11,9 @@ from tkinter import Entry
 MARGIN_SIDE_PT = 500
 MARGIN_TOP_AND_BOT_PT = 0
 
+global dumpfile
+dumpfile = "dumpfile.txt"
+
 
 def copy_outline(reader, writer, outline, parent=None):
 	last = None
@@ -43,15 +46,34 @@ def return_transformed(A, tx, ty):
 	return ArrayObject(A_prime)
 
 
+def dump(path, p, metadata):
+	with open(path, "a") as f:
+		f.write(f"--------[{metadata}]------------\n")
+		f.write("mediabox\n")
+		f.write(f"{str(p.mediabox)}\n")
+		for key in ("/CropBox", "/BleedBox", "/TrimBox", "/ArtBox"):
+			if key in p:
+				f.write(f"{key}\n")
+				f.write(f"{str(p[key])}\n")
+
+		f.close()
+
+
 def site1_old(p):
+	global dumpfile
+	dump(dumpfile, p, "old file")
 	pass
 
 
 def site2_blank(p):
+	global dumpfile
+	dump(dumpfile, p, "blank file")
 	pass
 
 
 def site3_new(p):
+	global dumpfile
+	dump(dumpfile, p, "new file")
 	pass
 
 
@@ -97,6 +119,10 @@ def convert(input_pdf, output_pdf):
 def main():
 	input_pdf = "testpdfs/singlepage.pdf"
 	output_pdf = "tmp.pdf"
+	global dumpfile
+	with open(dumpfile, "w") as f:
+		f.write("")
+		f.close()
 	convert(input_pdf, output_pdf)
 
 
