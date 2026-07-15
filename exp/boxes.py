@@ -5,7 +5,7 @@
 import sys
 from pathlib import Path
 from pypdf import PdfReader, PdfWriter, Transformation
-from pypdf.generic import FloatObject, NameObject, ArrayObject
+from pypdf.generic import FloatObject, NameObject, ArrayObject, RectangleObject
 from tkinter import Entry
 
 MARGIN_SIDE_PT = 500
@@ -13,26 +13,6 @@ MARGIN_TOP_AND_BOT_PT = 0
 
 global dumpfile
 dumpfile = "dumpfile.txt"
-
-
-def expand_box(box, rotation, left, right):
-	"""Return new [x0, y0, x1, y1] with margins added on the *visual* left/right."""
-	x0, y0, x1, y1 = (float(v) for v in box)
-
-	if rotation == 0:
-		x0 -= left
-		x1 += right
-	elif rotation == 90:
-		y0 -= left
-		y1 += right
-	elif rotation == 180:
-		x1 += left
-		x0 -= right
-	elif rotation == 270:
-		y1 += left
-		y0 -= right
-
-	return [x0, y0, x1, y1]
 
 
 def copy_outline(reader, writer, outline, parent=None):
@@ -115,7 +95,7 @@ def convert(input_pdf, output_pdf):
 		new_page = writer.add_blank_page(w, h)
 		site2_blank(new_page)
 		new_page.merge_transformed_page(page, Transformation().translate(tx, ty))
-		new_page.MediaBox = [500, 0, 1151.969, 824.882]
+		new_page.artbox = RectangleObject([500, 0, 1151, 824])
 		site3_new(new_page)
 		if "/Annots" in new_page:
 			for annot_ref in new_page["/Annots"]:
