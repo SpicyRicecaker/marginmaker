@@ -5,8 +5,14 @@ print(test)
 
 
 def _():
-    return 3
+	return 3
+
+
 print(_())
+
+
 def _():
-    return 4
+	return 4
+
+
 print(_())
