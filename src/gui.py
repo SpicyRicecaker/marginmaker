@@ -37,6 +37,7 @@ class App():
       self.root.title("Margin X-Spandr+🍎🍎🍎🍎🍎")
 
       body = ttk.Frame(self.root)
+      body.grid()
       set_width_child(body, 23)
       set_height_child(body, 20)
 
