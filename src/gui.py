@@ -42,7 +42,7 @@ class App():
       set_height_child(body, 20)
 
       label_random = ttk.Label(body, text="hello world")
-
+      label_random.grid(column=0, row=0)
       if False:
         f_portrait = ttk.Frame(body)
         f_portrait.grid(column=4, row=2, columnspan=18, rowspan=17)
