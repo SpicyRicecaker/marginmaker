@@ -94,6 +94,8 @@ def convert(input_pdf, output_pdf):
 		# create a new page and merge all changes into it
 		new_page = writer.add_blank_page(w, h)
 		site2_blank(new_page)
+		# print(dir(page))
+		print(page.extract_text())
 		new_page.merge_transformed_page(page, Transformation().translate(tx, ty))
 		new_page.artbox = RectangleObject([500, 0, 1151, 824])
 		site3_new(new_page)
@@ -116,8 +118,8 @@ def convert(input_pdf, output_pdf):
 		# add metadatga
 		copy_outline(reader, writer, reader.outline)
 
-	with open(output_pdf, "wb") as f:
-		writer.write(f)
+	# with open(output_pdf, "wb") as f:
+	# 	writer.write(f)
 
 
 def main():
