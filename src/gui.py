@@ -7,6 +7,9 @@ from scale import convert
 import ast
 from tkinter import *
 
+global debug
+debug = False
+
 def instafocus(window):
     # 1. Force the window to the very top layer
     window.attributes("-topmost", True)
@@ -29,6 +32,16 @@ def set_height_child(tk_element, height_child):
    for r in range(height_child):
       tk_element.grid_rowconfigure(r, weight=1)
 
+def override_selection(listbox, index_to_select):
+    # 1. Clear the old selection
+    listbox.selection_clear(0, tk.END)
+    
+    # 2. Select the new item
+    listbox.selection_set(index_to_select)
+    
+    # Optional: Update active item so keyboard navigation also reflects the change
+    listbox.activate(index_to_select)
+
 class App():
     def __init__(self):
       self.margin = 500
@@ -38,8 +51,6 @@ class App():
       self.root.title("Margin X-Spandr+🍎🍎🍎🍎🍎")
       self.root.columnconfigure(0, weight=1)
       self.root.rowconfigure(0, weight=1)
-
-      debug = False
 
       body = ttk.Frame(self.root, **(dict(borderwidth=5, relief="ridge") if debug else dict()))
       body.grid(column=0, row=0, sticky=(N, S, E, W))
@@ -80,7 +91,8 @@ class App():
             # event.data is a raw Tcl list string, not a Python list
             for path in self.root.tk.splitlist(event.data):
                 self.list_dropbox.insert(tk.END, path)
-            self.list_dropbox.selection_set(tk.END)
+            override_selection(self.list_dropbox, tk.END)
+
         self.list_dropbox.drop_target_register(DND_FILES)
         self.list_dropbox.dnd_bind("<<Drop>>", on_drop)
 
@@ -133,7 +145,7 @@ class App():
         self.root.mainloop()
 
     def on_mousedown(self):
-       print('hiiiiiiiiiiiiiiiiiiiiiiiii')
+       print('starting conversion...')
        # non_numeric = False
        # for c in '0123456789'.split(''):
        self.margin = int(self.margin_str.get())
@@ -141,11 +153,16 @@ class App():
        i = self.list_dropbox.curselection()
        if len(i) > 0:
          i = i[0]
-         filepaths = ast.literal_eval(self.listvar.get())
-         p = filepaths[i]
-         print(f'selecting {i} from {filepaths} which gives {p}')
-         convert(p, f'{p}.pdf')
-         print('done')
+         ps = ast.literal_eval(self.listvar.get())
+         p = ps[i]
+         if debug:
+           print(f'selecting {i} from {ps} which gives {p}')
+         p_prime = f'{p}.pdf'
+         convert(p, p_prime)
+         print('finished conversion.')
+         
+         self.list_dropbox.insert(tk.END, p_prime)
+         override_selection(self.list_dropbox, tk.END)
 
 def main():
     a = App()
