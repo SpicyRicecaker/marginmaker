@@ -35,16 +35,17 @@ class App():
       self.root = TkinterDnD.Tk()  # Notice - use this instead of tk.Tk()
       # self.root.geometry("500x400")
       self.root.title("Margin X-Spandr+🍎🍎🍎🍎🍎")
+      self.root.columnconfigure(0, weight=1)
+      self.root.rowconfigure(0, weight=1)
+      
 
-      body = ttk.Frame(self.root)
-      # body.grid()
+      body = ttk.Frame(self.root, borderwidth=5, relief="ridge", width=400, height=300)
+      body.grid(column=0, row=0)
       set_width_child(body, 23)
       set_height_child(body, 20)
 
-      label_random = ttk.Label(body, text="hello world")
-      label_random.grid(column=0, row=0)
-      if False:
-        f_portrait = ttk.Frame(body)
+      if True:
+        f_portrait = ttk.Frame(body, borderwidth=5, relief="ridge")
         f_portrait.grid(column=4, row=2, columnspan=18, rowspan=17)
         set_width_child(f_portrait, 18)
         set_height_child(f_portrait, 17)
@@ -79,8 +80,7 @@ class App():
         self.list_dropbox.drop_target_register(DND_FILES)
         self.list_dropbox.dnd_bind("<<Drop>>", on_drop)
 
-
-        label_margin = ttk.Frame(f_margin)
+        label_margin = ttk.Label(f_margin, text="Margin")
         label_margin.grid(column=0, row=0, columnspan=6)
         self.margin_str = StringVar(self.root)
         entry_margin = ttk.Entry(f_margin, textvariable=self.margin_str)
