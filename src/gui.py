@@ -5,6 +5,7 @@ import tkinter.ttk as ttk
 from tkinterdnd2 import DND_FILES, TkinterDnD
 from scale import convert
 import ast
+from tkinter import *
 
 def instafocus(window):
     # 1. Force the window to the very top layer
@@ -22,11 +23,11 @@ def instafocus(window):
 
 def set_width_child(tk_element, width_child):
    for c in range(width_child):
-      tk_element.columnconfigure(c, weight=1)
+      tk_element.grid_columnconfigure(c, weight=1)
 
 def set_height_child(tk_element, height_child):
    for r in range(height_child):
-      tk_element.rowconfigure(r, weight=1)
+      tk_element.grid_rowconfigure(r, weight=1)
 
 class App():
     def __init__(self):
@@ -37,41 +38,44 @@ class App():
       self.root.title("Margin X-Spandr+🍎🍎🍎🍎🍎")
       self.root.columnconfigure(0, weight=1)
       self.root.rowconfigure(0, weight=1)
-      
 
-      body = ttk.Frame(self.root, borderwidth=5, relief="ridge", width=400, height=300)
-      body.grid(column=0, row=0)
+      debug = False
+
+      body = ttk.Frame(self.root, **(dict(borderwidth=5, relief="ridge") if debug else dict()))
+      body.grid(column=0, row=0, sticky=(N, S, E, W))
       set_width_child(body, 23)
       set_height_child(body, 20)
 
       if True:
-        f_portrait = ttk.Frame(body, borderwidth=5, relief="ridge")
-        f_portrait.grid(column=4, row=2, columnspan=18, rowspan=17)
+        f_portrait = ttk.Frame(body, **(dict(borderwidth=5, relief="ridge") if debug else dict()))
+        f_portrait.grid(column=4, row=2, columnspan=18, rowspan=17, sticky=(N, S, E, W))
         set_width_child(f_portrait, 18)
         set_height_child(f_portrait, 17)
 
         f_dropbox = ttk.Frame(f_portrait)
-        f_dropbox.grid(column=0, row=0, columnspan=18, rowspan=12)
+        f_dropbox.grid(column=0, row=0, columnspan=18, rowspan=12, sticky=(N, S, E, W))
         set_width_child(f_dropbox, 18)
         set_height_child(f_dropbox, 12)
 
         f_margin = ttk.Frame(f_portrait)
-        f_margin.grid(column=0, row=12, columnspan=18, rowspan=2)
+        f_margin.grid(column=0, row=12, columnspan=18, rowspan=2, sticky=(N, S, E, W))
         set_width_child(f_margin, 18)
+        f_margin.rowconfigure(0, weight=50)
+        f_margin.rowconfigure(1, weight=150)
 
         f_convert = ttk.Frame(f_portrait)
-        f_convert.grid(column=0, row=14, columnspan=18, rowspan=3)
+        f_convert.grid(column=0, row=14, columnspan=18, rowspan=3, sticky=(N, S, E, W))
         set_width_child(f_convert, 18)
         set_height_child(f_convert, 3)
 
-        label_dropbox = ttk.Label(f_dropbox, text="Drop PDF below:")
-        label_dropbox.grid(column=0, row=0, columnspan=18, rowspan=2)
+        label_dropbox = ttk.Label(f_dropbox, text="Drop PDF below:", **(dict(borderwidth=5, relief="ridge") if debug else dict()))
+        label_dropbox.grid(column=0, row=0, columnspan=18, rowspan=2, sticky=(N, S))
         self.listvar = StringVar()
         def on_change(*args):
           print(self.listvar.get())
         self.listvar.trace_add("write", on_change)
-        self.list_dropbox = tk.Listbox(f_dropbox, listvariable=self.listvar)
-        self.list_dropbox.grid(column=0, row=2, rowspan=10)
+        self.list_dropbox = tk.Listbox(f_dropbox, listvariable=self.listvar, **(dict(borderwidth=5, relief="ridge") if debug else dict()), width=99)
+        self.list_dropbox.grid(column=0, row=2, columnspan=18, rowspan=10, sticky=(N, S))
         def on_drop(event):
             # event.data is a raw Tcl list string, not a Python list
             for path in self.root.tk.splitlist(event.data):
@@ -81,19 +85,19 @@ class App():
         self.list_dropbox.dnd_bind("<<Drop>>", on_drop)
 
         label_margin = ttk.Label(f_margin, text="Margin")
-        label_margin.grid(column=0, row=0, columnspan=6)
+        label_margin.grid(column=0, row=1, columnspan=6, sticky=(N, S, E, W))
         self.margin_str = StringVar(self.root)
         entry_margin = ttk.Entry(f_margin, textvariable=self.margin_str)
-        entry_margin.grid(column=6, row=0, columnspan=6)
+        entry_margin.grid(column=6, row=1, columnspan=6, sticky=(N, S, E, W))
         entry_margin.insert(0, "500")
         def on_change(*args):
             print(self.margin_str.get())
         self.margin_str.trace_add("write", on_change)
         btn_margin = ttk.Button(f_margin, text="Live preview")
-        btn_margin.grid(column=12, row=0, columnspan=6)
+        btn_margin.grid(column=12, row=1, columnspan=6, sticky=(N, S, E, W))
 
         btn_convert = ttk.Button(f_convert, text="Convert selected pdf", command=self.on_mousedown)
-        btn_convert.grid(column=4, row=2, columnspan=10, rowspan=2)
+        btn_convert.grid(column=4, row=2, columnspan=10, rowspan=2, sticky=(N, S, E, W))
         # BIGDESCRIPTION = ttk.Label(frm, text="HAVE YOU EVER WANTED TO CONVERT YOUR PDFS? WELL NOW INTRODUCING ooops caps MARGIN X-SPANDR+!" \
         # "NOW YOU CAN SPEAK BACK AGAINST THESE TEXTBOOK AUTHORS" \
         # "EXPRESS YOUR OPINION" \
