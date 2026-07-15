@@ -1,14 +1,5 @@
-from asyncio.queues import QueueShutDown
-from operator import eq
-from random import weibullvariate
-
 import pymupdf
-
-input_pdf = "testpdfs/singlepage.pdf"
-output_pdf = "singlepageconv.pdf"
-
-doc_orig = pymupdf.open("testpdfs/singlepage.pdf")
-doc_new = pymupdf.open()
+import os
 
 
 def rects(mx, my, w, h):
@@ -36,26 +27,26 @@ def rects(mx, my, w, h):
 	]
 
 
-mx = 200
-my = 200
+def cut(input, output, mx, my):
+	doc_orig = pymupdf.open(input)
+	doc_new = pymupdf.open()
 
-i = 0
-for page in doc_orig.pages():
-	x, y = page.mediabox_size.x, page.mediabox_size.y
+	i = 0
+	for page in doc_orig.pages():
+		x, y = page.mediabox_size.x, page.mediabox_size.y
 
-	page_new = doc_new.new_page(width=x, height=y)
-	page_new.show_pdf_page(page.rect, doc_orig, i)
+		page_new = doc_new.new_page(width=x, height=y)
+		page_new.show_pdf_page(page.rect, doc_orig, i)
 
-	x, y = page_new.mediabox_size.x, page_new.mediabox_size.y
-	for rect in rects(mx, my, x, y):
-		print(rect)
-		page_new.add_redact_annot(rect)
-	page_new.apply_redactions()
-	i += 1
+		x, y = page_new.mediabox_size.x, page_new.mediabox_size.y
+		for rect in rects(mx, my, x, y):
+			# print(rect)
+			page_new.add_redact_annot(rect)
+		page_new.apply_redactions()
+		i += 1
+
+	doc_new.save(output)
 
 
-doc_new.save("123.pdf")
-
-
-def test_recta():
-	rects_l = rects(200, 200, 800, 600)
+# def test_cut_1():
+cut("testpdfs/singlepage.pdf", "123.pdf", mx=200, my=200)
