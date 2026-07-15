@@ -51,7 +51,7 @@ class App:
 	def __init__(self):
 		self.margin = 500
 
-		self.root = TkinterDnD.Tk()  # Notice - use this instead of tk.Tk()
+		self.root = TkinterDnD.Tk()
 		# self.root.geometry("500x400")
 		self.root.title("Margin X-Spandr+🍎🍎🍎🍎🍎")
 		self.root.columnconfigure(0, weight=1)
@@ -154,25 +154,7 @@ class App:
 			# "NOW ONLY FREE")
 			# BIGDESCRIPTION.grid(column=0, row=2)
 
-		# In Python, trace_add takes (mode, callback) and callback receives standard args (*args)
-		# self.list_dropbox.grid(column=1, row=1)
-
 		instafocus(self.root)
-
-		# mg = ttk.Label(frm, text="Margin sides")
-		# mg.grid(column=1, row=1)
-
-		# frm2 = ttk.Frame(frm, padding=0)
-		# frm2.grid(column=0, row=0)
-
-		# mg = ttk.Label(frm2, text="Margin sides")
-		# mg.grid(column=0, row=0)
-
-		# mg_txt = ttk.Entry(frm2, textvariable=self.margin_str)
-		# mg_txt.grid(column=0, row=1)
-		# mg_txt.insert(0, "500")
-
-		# In Python, trace_add takes (mode, callback) and callback receives standard args (*args)
 
 	def run(self):
 		self.root.mainloop()
