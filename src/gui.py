@@ -129,6 +129,7 @@ class App:
 
 			self.list_dropbox.drop_target_register(DND_FILES)
 			self.list_dropbox.dnd_bind("<<Drop>>", on_drop)
+			self.list_dropbox.bind("<Double-1>", self.on_listitem_dclick)
 
 			label_margin = ttk.Label(f_margin, text="Margin")
 			label_margin.grid(column=0, row=1, columnspan=6, sticky=(N, S, E, W))
@@ -161,6 +162,15 @@ class App:
 
 	def run(self):
 		self.root.mainloop()
+
+	def on_listitem_dclick(self, *args):
+		i = self.list_dropbox.curselection()
+		if len(i) > 0:
+			i = i[0]
+			ps = ast.literal_eval(self.listvar.get())  # for some reason list is string
+			p = ps[i]
+
+			open_file_cross_platform(p)
 
 	def on_mousedown(self):
 		print("starting conversion...")
