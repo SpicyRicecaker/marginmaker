@@ -5,29 +5,55 @@ import numpy as np
 import shutil
 
 
-def rects(o, mx, my, w, h):
+# given an old mediabox and a new mediabox
+# generates all redaction squares necessary to remove all
+# content between the two mediaboxes
+class P:
+	def __init__(self, mediabox, mx, my):
+		"""
+		o - a 4d rect, representing the coordinates of the new mediabox
+		mx - representing the side margins that were added to the original mediabox
+		my - representing the top&bot margins that were added to the origin mediabox
+		"""
+		x0, y0, x1, y1 = mediabox
+		w = x1 - x0
+		h = y1 - y0
+
+		L = mx / 2
+		T = my / 2
+		W = w - 2 * L
+		H = h - 2 * T
+
+		o = np.array([x0, y0])
+
+		self.A = o
+		self.B = o + np.array([L + W, 0])
+		self.C = o + np.array([L + W + L, T])
+		self.D = o + np.array([L + W + L, T + H + T])
+		self.E = o + np.array([L, T + H + T])
+		self.F = o + np.array([0, T + H])
+
+		self.A = self.A.tolist()
+		self.B = self.B.tolist()
+		self.C = self.C.tolist()
+		self.D = self.D.tolist()
+		self.E = self.E.tolist()
+		self.F = self.F.tolist()
+
+	def redaction_rects(self):
+		return [
+			[*self.A, *self.C],
+			[*self.B, *self.D],
+			[*self.F, *self.D],
+			[*self.A, *self.E],
+		]
+
+
+def rects(mediabox, mx, my):
 	# see https://drive.google.com/file/d/1mAiyMTr5tcUmGRUGz8F4qJTnHwXQOPae/view?usp=sharing
-	L = mx / 2
-	T = my / 2
-	W = w - 2 * L
-	H = h - 2 * T
 
-	class P:
-		A = o
-		B = o + np.array([L + W, 0])
-		C = o + np.array([L + W + L, T])
-		D = o + np.array([L + W + L, T + H + T])
-		E = o + np.array([L, T + H + T])
-		F = o + np.array([0, T + H])
-
-	p = P()
-
-	return [
-		[*p.A, *p.C],
-		[*p.B, *p.D],
-		[*p.F, *p.D],
-		[*p.A, *p.E],
-	]
+	p = P(mediabox, mx, my)
+	return p.redaction_rects()
 
 
 def mediabox_size(mediabox):
@@ -40,10 +66,7 @@ def remove_trash(input, output, mx, my):
 	logger.debug(f"opening {output}")
 
 	for page in doc.pages():
-		x, y = mediabox_size(page.mediabox)
-
-		o = np.array([page.mediabox[0], page.mediabox[1]])
-		for rect in rects(o, mx, my, x, y):
+		for rect in rects(page.mediabox, mx, my):
 			# print(rect)
 			page.add_redact_annot(rect)
 		page.apply_redactions()
@@ -52,5 +75,18 @@ def remove_trash(input, output, mx, my):
 	doc.close()
 
 
-# def test_cut_1():
+def test_cut_1():
+	p = P(np.array([0, 0, 1000, 800]), mx=200, my=200)
+	assert p.A == [0, 0]
+	assert p.B == [900, 0]
+	assert p.C == [1000, 100]
+	assert p.D == [1000, 800]
+	assert p.E == [100, 800]
+	assert p.F == [0, 700]
+
+	for prop in "ABCDEF":
+		print(prop)
+		print(p.__dict__[prop])
+
+
 # remove_trash("testpdfs/singlepage.pdf", "123.pdf", mx=200, my=200)
