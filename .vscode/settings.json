@@ -10,8 +10,8 @@
 			"tooltip": "Executes my custom command regardless of active file"
 		},
 		{
-			"label": "$(play) src/pagebox.py",
-			"task": "pagebox",
+			"label": "$(play) scale.py (singlepage)",
+			"task": "scale (singlepage)",
 			"tooltip": "Executes my custom command regardless of active file"
 		}
 	]
