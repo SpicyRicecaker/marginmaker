@@ -2,6 +2,7 @@ import pymupdf
 import os
 from loguru import logger
 import numpy as np
+import shutil
 
 
 def rects(o, mx, my, w, h):
@@ -34,30 +35,21 @@ def mediabox_size(mediabox):
 
 
 def remove_trash(input, output, mx, my):
-	doc_orig = pymupdf.open(input)
-	doc_new = pymupdf.open()
-	logger.debug(f"opening {input}")
+	shutil.copy2(input, output)
+	doc = pymupdf.open(output)
+	logger.debug(f"opening {output}")
 
-	i = 0
-	for page in doc_orig.pages():
-		logger.debug(f"input pdf mediabox {page.mediabox}")
+	for page in doc.pages():
 		x, y = mediabox_size(page.mediabox)
-		logger.debug(f"final pdf size, x: {x}, y: {y}")
 
-		page_new = doc_new.new_page(width=x, height=y)
-		logger.debug(f"pasting onto {page.rect}")
-		page_new.show_pdf_page(page.rect, doc_orig, i, clip=[-250.0, 0.0, 862.0, 792.0])
+		o = np.array([page.mediabox[0], page.mediabox[1]])
+		for rect in rects(o, mx, my, x, y):
+			# print(rect)
+			page.add_redact_annot(rect)
+		page.apply_redactions()
 
-		# x, y = page_new.mediabox_size.x, page_new.mediabox_size.y
-		# o = np.array([page.mediabox[0], page.mediabox[1]])
-		# for rect in rects(o, mx, my, x, y):
-		# 	# print(rect)
-		# 	page_new.add_redact_annot(rect)
-		# page_new.apply_redactions()
-		break
-		# i += 1
-	doc_new.save(output)
-	doc_new.close()
+	doc.save(output, incremental=True, encryption=pymupdf.PDF_ENCRYPT_KEEP)
+	doc.close()
 
 
 # def test_cut_1():
