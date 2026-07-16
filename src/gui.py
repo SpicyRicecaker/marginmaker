@@ -56,7 +56,7 @@ class App:
 
 		self.root = TkinterDnD.Tk()
 		# self.root.geometry("500x400")
-		self.root.title("Margin X-Spandr+🍎🍎🍎🍎🍎")
+		self.root.title("Marginmaker")
 		self.root.columnconfigure(0, weight=1)
 		self.root.rowconfigure(0, weight=1)
 
