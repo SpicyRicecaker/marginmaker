@@ -1,11 +1,14 @@
+import ast
+
+from tkinter import *
 import tkinter as tk
 from tkinter import Entry, StringVar
 from tkinter.ttk import Frame, Label, Button
 import tkinter.ttk as ttk
 from tkinterdnd2 import DND_FILES, TkinterDnD
+
 from .scale import expand_and_remove_trash
-import ast
-from tkinter import *
+from .open import open_file_cross_platform
 
 global debug
 debug = False
@@ -168,7 +171,7 @@ class App:
 		i = self.list_dropbox.curselection()
 		if len(i) > 0:
 			i = i[0]
-			ps = ast.literal_eval(self.listvar.get())
+			ps = ast.literal_eval(self.listvar.get())  # for some reason list is string
 			p = ps[i]
 			if debug:
 				print(f"selecting {i} from {ps} which gives {p}")
