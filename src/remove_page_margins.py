@@ -49,4 +49,4 @@ def remove_trash(input, output, mx, my):
 
 
 # def test_cut_1():
-remove_trash("testpdfs/singlepage.pdf", "123.pdf", mx=200, my=200)
+# remove_trash("testpdfs/singlepage.pdf", "123.pdf", mx=200, my=200)

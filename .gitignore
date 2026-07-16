@@ -3,3 +3,6 @@
 /uv.lock
 __pycache__
 *.txt
+/dist
+/build
+*.spec
