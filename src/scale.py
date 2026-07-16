@@ -7,6 +7,7 @@ from pathlib import Path
 from pypdf import PdfReader, PdfWriter, Transformation
 from pypdf.generic import FloatObject, NameObject, ArrayObject
 from tkinter import Entry
+from remove_page_margins import cut
 
 MARGIN_SIDE_PT = 500
 MARGIN_TOP_AND_BOT_PT = 0
@@ -93,10 +94,10 @@ def main():
 	has_output = len(args) > 1 and not args[1].replace(".", "", 1).isdigit()
 	output_pdf = args[1] if has_output else f"{'scaled'}_{Path(input_pdf).name}"
 
-	convert(input_pdf, output_pdf)
+	tmp_pdf = "tmp.pdf"
+	convert(input_pdf, tmp_pdf)
+	cut(tmp_pdf, output_pdf, mx=MARGIN_SIDE_PT, my=MARGIN_TOP_AND_BOT_PT)
 
 
 if __name__ == "__main__":
 	main()
-
-	Entry()
