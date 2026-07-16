@@ -173,7 +173,7 @@ class App:
 			if debug:
 				print(f"selecting {i} from {ps} which gives {p}")
 			p_prime = f"{p}.pdf"
-			expand_and_remove_trash(p, p_prime)
+			expand_and_remove_trash(p, p_prime, self.margin, 0)
 			print("finished conversion.")
 
 			self.list_dropbox.insert(tk.END, p_prime)

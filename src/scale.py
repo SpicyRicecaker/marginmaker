@@ -44,19 +44,19 @@ def return_transformed(A, tx, ty):
 	return ArrayObject(A_prime)
 
 
-def expand(input_pdf, output_pdf):
+def expand(input_pdf, output_pdf, mx=MARGIN_SIDE_PT, my=MARGIN_TOP_AND_BOT_PT):
 	reader = PdfReader(input_pdf)
 	writer = PdfWriter()
 
 	for page in reader.pages:
 		# get the page width and height
 		w, h = (
-			float(page.mediabox.width) + MARGIN_SIDE_PT,
-			float(page.mediabox.height) + MARGIN_TOP_AND_BOT_PT,
+			float(page.mediabox.width) + mx,
+			float(page.mediabox.height) + my,
 		)
 		# calculate how much we need to transform the page
-		tx = MARGIN_SIDE_PT / 2
-		ty = MARGIN_TOP_AND_BOT_PT / 2
+		tx = mx / 2
+		ty = my / 2
 		# create a new page and merge all changes into it
 		new_page = writer.add_blank_page(w, h)
 		new_page.merge_transformed_page(page, Transformation().translate(tx, ty))
@@ -83,10 +83,12 @@ def expand(input_pdf, output_pdf):
 		writer.write(f)
 
 
-def expand_and_remove_trash(input_pdf, output_pdf):
+def expand_and_remove_trash(
+	input_pdf, output_pdf, mx=MARGIN_SIDE_PT, my=MARGIN_TOP_AND_BOT_PT
+):
 	tmp_pdf = "tmp.pdf"
-	expand(input_pdf, tmp_pdf)
-	remove_trash(tmp_pdf, output_pdf, mx=MARGIN_SIDE_PT, my=MARGIN_TOP_AND_BOT_PT)
+	expand(input_pdf, tmp_pdf, mx, my)
+	remove_trash(tmp_pdf, output_pdf, mx, my)
 
 
 def main():
