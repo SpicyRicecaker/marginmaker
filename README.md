@@ -5,3 +5,9 @@
 uv sync
 uv run run.py
 ```
+
+# Building
+
+```py
+pyinstaller --onefile --noconsole marginmaker.py
+```
