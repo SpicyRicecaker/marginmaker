@@ -89,4 +89,18 @@ def test_cut_1():
 		print(p.__dict__[prop])
 
 
+def test_cut_2():
+	p = P(np.array([-100, 0, 900, 600]), mx=200, my=0)
+	assert p.A == [-100, 0]
+	assert p.B == [800, 0]
+	assert p.C == [900, 0]
+	assert p.D == [900, 600]
+	assert p.E == [0, 600]
+	assert p.F == [-100, 600]
+
+	for prop in "ABCDEF":
+		print(prop)
+		print(p.__dict__[prop])
+
+
 # remove_trash("testpdfs/singlepage.pdf", "123.pdf", mx=200, my=200)
