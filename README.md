@@ -3,7 +3,7 @@
 ```py
 # install deps
 uv sync
-uv run run.py
+uv run marginmaker.py
 ```
 
 # Building
