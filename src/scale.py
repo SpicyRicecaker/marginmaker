@@ -116,6 +116,7 @@ def expand_via_mediabox(input_pdf, output_pdf, mx, my):
 					page[key] = expand_box(page[key], rotation, mx, my)
 
 		pdf.save(output_pdf)
+		pdf.close()
 
 
 def expand(input_pdf, output_pdf, mx=MARGIN_SIDE_PT, my=MARGIN_TOP_AND_BOT_PT):

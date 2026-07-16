@@ -46,7 +46,7 @@ def remove_trash(input, output, mx, my):
 
 		page_new = doc_new.new_page(width=x, height=y)
 		logger.debug(f"pasting onto {page.rect}")
-		page_new.show_pdf_page(page.rect, doc_orig, i)
+		page_new.show_pdf_page(page.rect, doc_orig, i, clip=[-250.0, 0.0, 862.0, 792.0])
 
 		# x, y = page_new.mediabox_size.x, page_new.mediabox_size.y
 		# o = np.array([page.mediabox[0], page.mediabox[1]])
@@ -56,8 +56,8 @@ def remove_trash(input, output, mx, my):
 		# page_new.apply_redactions()
 		break
 		# i += 1
-
 	doc_new.save(output)
+	doc_new.close()
 
 
 # def test_cut_1():
