@@ -120,7 +120,7 @@ def expand_via_mediabox(input_pdf, output_pdf, mx, my):
 
 
 def expand(input_pdf, output_pdf, mx=MARGIN_SIDE_PT, my=MARGIN_TOP_AND_BOT_PT):
-	expand_via_mediabox(input_pdf, output_pdf, mx, my)
+	expand_via_scale(input_pdf, output_pdf, mx, my)
 
 
 def expand_and_remove_trash(
