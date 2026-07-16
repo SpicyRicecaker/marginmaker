@@ -4,6 +4,7 @@ from pypdf import PdfReader, PdfWriter, Transformation
 from pypdf.generic import FloatObject, NameObject, ArrayObject
 from .remove_page_margins import remove_trash
 from loguru import logger
+import pikepdf
 
 MARGIN_SIDE_PT = 500
 MARGIN_TOP_AND_BOT_PT = 0
@@ -40,7 +41,7 @@ def return_transformed(A, tx, ty):
 	return ArrayObject(A_prime)
 
 
-def expand(input_pdf, output_pdf, mx=MARGIN_SIDE_PT, my=MARGIN_TOP_AND_BOT_PT):
+def expand_via_scale(input_pdf, output_pdf, mx, my):
 	reader = PdfReader(input_pdf)
 	writer = PdfWriter()
 
@@ -81,12 +82,53 @@ def expand(input_pdf, output_pdf, mx=MARGIN_SIDE_PT, my=MARGIN_TOP_AND_BOT_PT):
 		writer.write(f)
 
 
+def expand_box(box, rotation, mx, my):
+	"""Return new [x0, y0, x1, y1] with margins added on the *visual* left/right."""
+	x0, y0, x1, y1 = (float(v) for v in box)
+	L = mx / 2
+	if rotation == 0:
+		x0 -= L
+		x1 += L
+	elif rotation == 90:
+		y0 -= L
+		y1 += L
+	elif rotation == 180:
+		x1 += L
+		x0 -= L
+	elif rotation == 270:
+		y1 += L
+		y0 -= L
+
+	return [x0, y0, x1, y1]
+
+
+def expand_via_mediabox(input_pdf, output_pdf, mx, my):
+	with pikepdf.open(input_pdf) as pdf:
+		for page in pdf.pages:
+			rotation = page.rotation % 360  # effective rotation, handles inheritance
+
+			# MediaBox always exists (possibly inherited); pikepdf resolves it
+			page.MediaBox = expand_box(page.mediabox, rotation, mx, my)
+
+			# Expand the other boxes too, if the page defines them
+			for key in ("/CropBox", "/BleedBox", "/TrimBox", "/ArtBox"):
+				if key in page:
+					page[key] = expand_box(page[key], rotation, mx, my)
+
+		pdf.save(output_pdf)
+
+
+def expand(input_pdf, output_pdf, mx=MARGIN_SIDE_PT, my=MARGIN_TOP_AND_BOT_PT):
+	expand_via_mediabox(input_pdf, output_pdf, mx, my)
+
+
 def expand_and_remove_trash(
 	input_pdf, output_pdf, mx=MARGIN_SIDE_PT, my=MARGIN_TOP_AND_BOT_PT
 ):
 	tmp_pdf = "tmp.pdf"
 	expand(input_pdf, tmp_pdf, mx, my)
 	remove_trash(tmp_pdf, output_pdf, mx, my)
+	logger.debug("finished conversion")
 
 
 def main():
@@ -101,7 +143,6 @@ def main():
 	output_pdf = args[1] if has_output else f"{'scaled'}_{Path(input_pdf).name}"
 
 	expand_and_remove_trash(input_pdf, output_pdf)
-	# expand(input_pdf, output_pdf)
 
 
 if __name__ == "__main__":

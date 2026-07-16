@@ -4,7 +4,7 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "open file xyz",
+			"label": "scale",
 			"type": "process",
 			"command": "${workspaceFolder}/.venv/Scripts/python.exe",
 			"args": [

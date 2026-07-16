@@ -1,9 +1,10 @@
 import pymupdf
 import os
 from loguru import logger
+import numpy as np
 
 
-def rects(mx, my, w, h):
+def rects(o, mx, my, w, h):
 	# see https://drive.google.com/file/d/1mAiyMTr5tcUmGRUGz8F4qJTnHwXQOPae/view?usp=sharing
 	L = mx / 2
 	T = my / 2
@@ -11,12 +12,12 @@ def rects(mx, my, w, h):
 	H = h - 2 * T
 
 	class P:
-		A = (0, 0)
-		B = (L + W, 0)
-		C = (L + W + L, T)
-		D = (L + W + L, T + H + T)
-		E = (L, T + H + T)
-		F = (0, T + H)
+		A = o
+		B = o + np.array([L + W, 0])
+		C = o + np.array([L + W + L, T])
+		D = o + np.array([L + W + L, T + H + T])
+		E = o + np.array([L, T + H + T])
+		F = o + np.array([0, T + H])
 
 	p = P()
 
@@ -34,14 +35,16 @@ def remove_trash(input, output, mx, my):
 
 	i = 0
 	for page in doc_orig.pages():
-		logger.debug(f"final pdf dimensions {page.mediabox}")
+		logger.debug(f"final pdf mediabox {page.mediabox}")
 		x, y = page.mediabox_size.x, page.mediabox_size.y
+		logger.debug(f"final pdf size, x: {x}, y: {y}")
 
 		page_new = doc_new.new_page(width=x, height=y)
 		page_new.show_pdf_page(page.rect, doc_orig, i)
 
 		x, y = page_new.mediabox_size.x, page_new.mediabox_size.y
-		for rect in rects(mx, my, x, y):
+		o = np.array([page.mediabox[0], page.mediabox[1]])
+		for rect in rects(o, mx, my, x, y):
 			# print(rect)
 			page_new.add_redact_annot(rect)
 		page_new.apply_redactions()
