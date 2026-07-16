@@ -29,26 +29,33 @@ def rects(o, mx, my, w, h):
 	]
 
 
+def mediabox_size(mediabox):
+	return mediabox[2] - mediabox[0], mediabox[3] - mediabox[1]
+
+
 def remove_trash(input, output, mx, my):
 	doc_orig = pymupdf.open(input)
 	doc_new = pymupdf.open()
+	logger.debug(f"opening {input}")
 
 	i = 0
 	for page in doc_orig.pages():
-		logger.debug(f"final pdf mediabox {page.mediabox}")
-		x, y = page.mediabox_size.x, page.mediabox_size.y
+		logger.debug(f"input pdf mediabox {page.mediabox}")
+		x, y = mediabox_size(page.mediabox)
 		logger.debug(f"final pdf size, x: {x}, y: {y}")
 
 		page_new = doc_new.new_page(width=x, height=y)
+		logger.debug(f"pasting onto {page.rect}")
 		page_new.show_pdf_page(page.rect, doc_orig, i)
 
-		x, y = page_new.mediabox_size.x, page_new.mediabox_size.y
-		o = np.array([page.mediabox[0], page.mediabox[1]])
-		for rect in rects(o, mx, my, x, y):
-			# print(rect)
-			page_new.add_redact_annot(rect)
-		page_new.apply_redactions()
-		i += 1
+		# x, y = page_new.mediabox_size.x, page_new.mediabox_size.y
+		# o = np.array([page.mediabox[0], page.mediabox[1]])
+		# for rect in rects(o, mx, my, x, y):
+		# 	# print(rect)
+		# 	page_new.add_redact_annot(rect)
+		# page_new.apply_redactions()
+		break
+		# i += 1
 
 	doc_new.save(output)
 
