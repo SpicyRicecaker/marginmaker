@@ -1,0 +1,13 @@
+{
+	"code-runner.runInTerminal": true,
+	"code-runner.executorMap": {
+		"python": "python -m src.$fileNameWithoutExt testpdfs/image.pdf 12345.pdf"
+	},
+	"VsCodeTaskButtons.tasks": [
+    {
+        "label": "$(play) Run My Command",
+        "task": "open file xyz",
+        "tooltip": "Executes my custom command regardless of active file"
+    }
+]
+}

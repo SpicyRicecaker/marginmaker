@@ -1,13 +1,9 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# dependencies = ["pypdf"]
-# ///
 import sys
 from pathlib import Path
 from pypdf import PdfReader, PdfWriter, Transformation
 from pypdf.generic import FloatObject, NameObject, ArrayObject
-from tkinter import Entry
 from .remove_page_margins import remove_trash
+from loguru import logger
 
 MARGIN_SIDE_PT = 500
 MARGIN_TOP_AND_BOT_PT = 0
@@ -50,6 +46,7 @@ def expand(input_pdf, output_pdf, mx=MARGIN_SIDE_PT, my=MARGIN_TOP_AND_BOT_PT):
 
 	for page in reader.pages:
 		# get the page width and height
+		logger.debug(f"input pdf dimensions {page.mediabox}")
 		w, h = (
 			float(page.mediabox.width) + mx,
 			float(page.mediabox.height) + my,
@@ -60,6 +57,7 @@ def expand(input_pdf, output_pdf, mx=MARGIN_SIDE_PT, my=MARGIN_TOP_AND_BOT_PT):
 		# create a new page and merge all changes into it
 		new_page = writer.add_blank_page(w, h)
 		new_page.merge_transformed_page(page, Transformation().translate(tx, ty))
+		logger.debug(f"output pdf dimensions {new_page.mediabox}")
 		if "/Annots" in new_page:
 			for annot_ref in new_page["/Annots"]:
 				annot = annot_ref.get_object()
@@ -103,6 +101,7 @@ def main():
 	output_pdf = args[1] if has_output else f"{'scaled'}_{Path(input_pdf).name}"
 
 	expand_and_remove_trash(input_pdf, output_pdf)
+	# expand(input_pdf, output_pdf)
 
 
 if __name__ == "__main__":

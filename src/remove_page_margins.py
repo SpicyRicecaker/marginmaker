@@ -1,5 +1,6 @@
 import pymupdf
 import os
+from loguru import logger
 
 
 def rects(mx, my, w, h):
@@ -33,6 +34,7 @@ def remove_trash(input, output, mx, my):
 
 	i = 0
 	for page in doc_orig.pages():
+		logger.debug(f"final pdf dimensions {page.mediabox}")
 		x, y = page.mediabox_size.x, page.mediabox_size.y
 
 		page_new = doc_new.new_page(width=x, height=y)
