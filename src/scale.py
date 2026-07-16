@@ -7,7 +7,7 @@ from pathlib import Path
 from pypdf import PdfReader, PdfWriter, Transformation
 from pypdf.generic import FloatObject, NameObject, ArrayObject
 from tkinter import Entry
-from remove_page_margins import cut
+from .remove_page_margins import remove_trash
 
 MARGIN_SIDE_PT = 500
 MARGIN_TOP_AND_BOT_PT = 0
@@ -44,7 +44,7 @@ def return_transformed(A, tx, ty):
 	return ArrayObject(A_prime)
 
 
-def convert(input_pdf, output_pdf):
+def expand(input_pdf, output_pdf):
 	reader = PdfReader(input_pdf)
 	writer = PdfWriter()
 
@@ -83,6 +83,12 @@ def convert(input_pdf, output_pdf):
 		writer.write(f)
 
 
+def expand_and_remove_trash(input_pdf, output_pdf):
+	tmp_pdf = "tmp.pdf"
+	expand(input_pdf, tmp_pdf)
+	remove_trash(tmp_pdf, output_pdf, mx=MARGIN_SIDE_PT, my=MARGIN_TOP_AND_BOT_PT)
+
+
 def main():
 	args = [a for a in sys.argv[1:]]
 
@@ -94,9 +100,7 @@ def main():
 	has_output = len(args) > 1 and not args[1].replace(".", "", 1).isdigit()
 	output_pdf = args[1] if has_output else f"{'scaled'}_{Path(input_pdf).name}"
 
-	tmp_pdf = "tmp.pdf"
-	convert(input_pdf, tmp_pdf)
-	cut(tmp_pdf, output_pdf, mx=MARGIN_SIDE_PT, my=MARGIN_TOP_AND_BOT_PT)
+	expand_and_remove_trash(input_pdf, output_pdf)
 
 
 if __name__ == "__main__":

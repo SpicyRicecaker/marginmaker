@@ -3,7 +3,7 @@ from tkinter import Entry, StringVar
 from tkinter.ttk import Frame, Label, Button
 import tkinter.ttk as ttk
 from tkinterdnd2 import DND_FILES, TkinterDnD
-from scale import convert
+from .scale import expand_and_remove_trash
 import ast
 from tkinter import *
 
@@ -173,7 +173,7 @@ class App:
 			if debug:
 				print(f"selecting {i} from {ps} which gives {p}")
 			p_prime = f"{p}.pdf"
-			convert(p, p_prime)
+			expand_and_remove_trash(p, p_prime)
 			print("finished conversion.")
 
 			self.list_dropbox.insert(tk.END, p_prime)
