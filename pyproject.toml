@@ -17,3 +17,6 @@ dependencies = [
 
 [tool.ruff.format]
 indent-style = "tab"
+
+[tool.uv]
+python-preference = "only-managed"
