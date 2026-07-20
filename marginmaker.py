@@ -3,7 +3,8 @@ from loguru import logger
 from src.gui import main
 
 logger.remove()
-logger.add(sys.stderr, level="INFO")
+sink = sys.stderr if sys.stderr is not None else "app.log"
+logger.add(sink, level="INFO")
 
 
 if __name__ == "__main__":
