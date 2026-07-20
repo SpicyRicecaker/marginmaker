@@ -70,10 +70,7 @@ def remove_trash(input, output, mx, my):
 			# print(rect)
 			page.add_redact_annot(rect)
 		logger.info(f"adding redactions to page {i}")
-		try:
-			page.apply_redactions()
-		except Exception:
-			page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_REMOVE)
+		page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_REMOVE)
 
 	doc.save(output, incremental=True, encryption=pymupdf.PDF_ENCRYPT_KEEP)
 	doc.close()
