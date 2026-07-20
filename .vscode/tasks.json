@@ -32,8 +32,8 @@
 			"args": [
 				"-m",
 				"src.scale",
-				"${workspaceFolder}/testpdfs/singlepage.pdf",
-				"${workspaceFolder}/singlepage_ext.pdf"
+				"${workspaceFolder}/testpdfs/page70.pdf",
+				"${workspaceFolder}/page70_ext.pdf"
 			],
 			"presentation": {
 				"reveal": "always",
