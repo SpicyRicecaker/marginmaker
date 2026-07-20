@@ -13,6 +13,11 @@
 			"label": "$(play) scale.py (singlepage)",
 			"task": "scale (singlepage)",
 			"tooltip": "Executes my custom command regardless of active file"
+		},
+		{
+			"label": "$(play) gui",
+			"task": "gui",
+			"tooltip": "Executes my custom command regardless of active file"
 		}
-	]
+x	]
 }

@@ -12,7 +12,7 @@
 				"src.scale",
 				"${workspaceFolder}/testpdfs/image.pdf",
 				"${workspaceFolder}/12345.pdf"
-			] ,
+			],
 			"presentation": {
 				"reveal": "always",
 				"panel": "shared",
@@ -34,7 +34,26 @@
 				"src.scale",
 				"${workspaceFolder}/testpdfs/singlepage.pdf",
 				"${workspaceFolder}/singlepage_ext.pdf"
-			] ,
+			],
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
+				"clear": false,
+				"showReuseMessage": false
+			},
+			"problemMatcher": [],
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "gui",
+			"type": "process",
+			"command": "${workspaceFolder}/.venv/Scripts/python.exe",
+			"args": [
+				"marginmaker.py",
+			],
 			"presentation": {
 				"reveal": "always",
 				"panel": "shared",

@@ -65,10 +65,11 @@ def remove_trash(input, output, mx, my):
 	doc = pymupdf.open(output)
 	logger.debug(f"opening {output}")
 
-	for page in doc.pages():
+	for i, page in enumerate(doc.pages(), 1):
 		for rect in rects(page.mediabox, mx, my):
 			# print(rect)
 			page.add_redact_annot(rect)
+		logger.info(f"adding redactions to page {i}")
 		page.apply_redactions()
 
 	doc.save(output, incremental=True, encryption=pymupdf.PDF_ENCRYPT_KEEP)
