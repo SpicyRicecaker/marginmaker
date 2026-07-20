@@ -40,12 +40,16 @@ class P:
 		self.E = self.E.tolist()
 		self.F = self.F.tolist()
 
+		self.e = 50
+
 	def redaction_rects(self):
+		# add slight margin between rect and original media page, to prevent content we care about
+		# getting deleted
 		return [
-			[*self.A, *self.C],
-			[*self.B, *self.D],
-			[*self.F, *self.D],
-			[*self.A, *self.E],
+			[*(self.A + np.array([0, 0])), *(self.C + np.array([0, -self.e]))],
+			[*(self.B + np.array([self.e, 0])), *(self.D + np.array([0, 0]))],
+			[*(self.F + np.array([0, self.e])), *(self.D + np.array([0, 0]))],
+			[*(self.A + np.array([0, 0])), *(self.E + np.array([-self.e, 0]))],
 		]
 
 
